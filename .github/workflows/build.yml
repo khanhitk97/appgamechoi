@@ -1,23 +1,43 @@
-name: EmergencyVN
-options:
-  bundleIdPrefix: com.traveler.emergencyvn
-  deploymentTarget:
-    iOS: "16.0"
-targets:
-  EmergencyVN:
-    type: application
-    platform: iOS
-    sources:
-      - Sources
-    info:
-      properties:
-        CFBundleDisplayName: "SOS Việt Nam"
-        CFBundleShortVersionString: "1.0.0"
-        CFBundleVersion: "1"
-        UILaunchScreen: {}
-        NSLocationWhenInUseUsageDescription: "Cần quyền vị trí để lấy tọa độ GPS chính xác và gửi cứu hộ khi gặp nạn."
-    settings:
-      base:
-        CODE_SIGNING_ALLOWED: NO
-        CODE_SIGNING_REQUIRED: NO
-        CODE_SIGN_IDENTITY: ""
+name: Build EmergencyVN IPA
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Cài đặt XcodeGen
+        run: brew install xcodegen
+
+      - name: Tạo dự án Xcode
+        run: xcodegen generate
+
+      - name: Build Archive (Bỏ qua ký số)
+        run: |
+          xcodebuild clean archive \
+            -project EmergencyVN.xcodeproj \
+            -scheme EmergencyVN \
+            -configuration Release \
+            -archivePath "build/EmergencyVN.xcarchive" \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Đóng gói thành IPA
+        run: |
+          mkdir Payload
+          cp -r build/EmergencyVN.xcarchive/Products/Applications/*.app Payload/
+          zip -r -y EmergencyVN.ipa Payload
+          rm -rf Payload
+
+      - name: Tải file IPA lên Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: EmergencyVN-IPA
+          path: EmergencyVN.ipa
+          retention-days: 7
