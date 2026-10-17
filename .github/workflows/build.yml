@@ -11,13 +11,17 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Cài đặt XcodeGen
+      - name: Cai dat Python va sinh Database SQLite
+        run: |
+          python3 build_db.py
+
+      - name: Cai dat XcodeGen
         run: brew install xcodegen
 
-      - name: Tạo dự án Xcode
+      - name: Sinh Xcode Project tu project.yml
         run: xcodegen generate
 
-      - name: Build Archive (Bỏ qua ký số)
+      - name: Build Archive (Skip Code Signing)
         run: |
           xcodebuild clean archive \
             -project EmergencyVN.xcodeproj \
@@ -28,14 +32,14 @@ jobs:
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO
 
-      - name: Đóng gói thành IPA
+      - name: Dong goi thanh IPA
         run: |
           mkdir Payload
           cp -r build/EmergencyVN.xcarchive/Products/Applications/*.app Payload/
           zip -r -y EmergencyVN.ipa Payload
           rm -rf Payload
 
-      - name: Tải file IPA lên Artifacts
+      - name: Upload IPA Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: EmergencyVN-IPA
