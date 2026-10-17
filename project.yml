@@ -9,17 +9,8 @@ targets:
     platform: iOS
     sources:
       - Sources
-    resources:
-      - Sources/police_vn.sqlite
-    dependencies:
-      - sdk: libsqlite3.tbd
     info:
-      properties:
-        CFBundleDisplayName: "SOS Việt Nam"
-        CFBundleShortVersionString: "1.0.0"
-        CFBundleVersion: "1"
-        UILaunchScreen: {}
-        NSLocationWhenInUseUsageDescription: "Ứng dụng cần quyền vị trí để lấy tọa độ GPS chính xác và gửi cứu hộ khi gặp nạn."
+      path: Sources/Info.plist
     settings:
       base:
         CODE_SIGNING_ALLOWED: NO
