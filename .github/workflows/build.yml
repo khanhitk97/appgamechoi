@@ -27,6 +27,7 @@ jobs:
             -project EmergencyVN.xcodeproj \
             -scheme EmergencyVN \
             -configuration Release \
+            -destination "generic/platform=iOS" \
             -archivePath "build/EmergencyVN.xcarchive" \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
